@@ -16,6 +16,6 @@ A pergunta que buscamos responder neste projeto é: Qual será a classificação
  O dataset inclui contém informações abrangentes sobre 2.392 estudantes do ensino médio, detalhando seus dados demográficos, hábitos de estudo, envolvimento dos pais, atividades extracurriculares e desempenho acadêmico. Possui 2392 linhas, 17 colunas e algumas variaveis como: idade, Genero, etinia, eduação parental, habitos de estudo entro outros. 
  
  #### Pré-processamento dos Dados:
-Limpeza dos dados, incluindo tratamento de valores ausentes e inconsistências.
-Transformação de variáveis categóricas em variáveis numéricas (codificação).
-Normalização/Padronização dos dados para otimizar o desempenho do modelo de classificação.
+- Limpeza dos dados, incluindo tratamento de valores ausentes e inconsistências.
+- Transformação de variáveis categóricas em variáveis numéricas (codificação).
+- Normalização/Padronização dos dados para otimizar o desempenho do modelo de classificação.
