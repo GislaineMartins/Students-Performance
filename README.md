@@ -33,7 +33,7 @@ A pergunta que buscamos responder neste projeto é: Qual será a classificação
   - Avaliação do desempenho do modelo utilizando a métrica de Acurácia.
 
 #### 6) Implementação e Resultados:
-  - Implementação do modelo de classificação para prever GradeClass que é o classificador de estudantes.
+  - Implementação do modelo de classificação para prever GradeClass que é a variavel para classificar os estudantes.
   - Interpretação dos resultados e resposta à pergunta de pesquisa.
 
 ## Resultados
