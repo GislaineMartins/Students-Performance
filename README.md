@@ -42,7 +42,7 @@ A pergunta que buscamos responder neste projeto é: Qual será a classificação
 - Observando a acurácia é possivel perceber que a proporção de previsões corretas feitas pelo modelo em relação ao total de previsões foi de quase 100%.
 - Ao inserir novos dados de novos alunos podemos concluir que o modelo será capaz de prever a classificação de grupos com 94% de acerto.
 
-  ## Futuras Direções
+## Futuras Direções
   Para melhorar ainda mais este projeto, futuras análises podem incluir:
   - Outras métrica como precisão, Precisão, Recall, F1-Score, entre outras.
 
