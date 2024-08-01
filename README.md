@@ -46,7 +46,7 @@ A pergunta que buscamos responder neste projeto é: Qual será a classificação
   Para melhorar ainda mais este projeto, futuras análises podem incluir:
   - Outras métrica como precisão, Precisão, Recall, F1-Score, entre outras.
 
-## [Documentação](#https://github.com/GislaineMartins/Students-Performance/wiki)
+## [Documentação](https://github.com/GislaineMartins/Students-Performance/wiki)
 
 
 
