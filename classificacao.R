@@ -2,7 +2,7 @@
 # a) Carga de pacotes
 
 library(ggplot2) # visualização dos dados 
-library(dplyr) # Usado para as funções de filtro e tratamento de dados
+library(dplyr) # Usado para as funções de filtro e tramento de dados
 library(reshape2) # Converter a matriz de correlação em um data frame
 library(caret) # Usada para usar a função createDataPartition (partição dos dados)
 library(corrplot) # Visualizar as variaveis correlacionadas
@@ -11,6 +11,7 @@ library(class)# pacote para modelo KNN
 library(e1071) # pacote para modelo  naiveBayes
 library(kernlab) # pacote para modelo  SVM
 library(mlbench) # pacote para modelo  SVM
+
 
 install.packages("class")
 install.packages("corrplot")
@@ -52,7 +53,7 @@ str(tabela)
 # É possivel perceber que as variaveis: StudyTimeWeekly, GPA e GradeClass são do tipo
 # caracter e as demais são do tipo inteiros
 
-# 2) Transformar as variaveis de caracteres para numericos. 
+# 2) Transformador as variaveis de caracteres para numericos. 
 
 
 # 2.1) StudyTimeWeekly
@@ -67,7 +68,7 @@ tabela$StudyTimeWeekly <- as.numeric(tabela$StudyTimeWeekly) # Converte para num
 
 # Verificar e validar os dados
 # Verificar se a conversão foi bem sucedida
-summary(tabela$StudyTimeWeekly)  # # Resumo estatístico da variavel
+summary(tabela$StudyTimeWeekly)  # Resumo estatístico dos dados
 
 # Observando o resultado é possivel observar que os valores são extremamente grandes.
 # Sendo assim, será necessario fazer uma normalização para ajustar os valores para
@@ -81,9 +82,8 @@ tabela$StudyTimeWeekly_log_scaled <- log(tabela$StudyTimeWeekly)
 
 ggplot(tabela, aes(y = StudyTimeWeekly_log_scaled)) +
   geom_boxplot() +
-  labs(title = "Boxplot de StudyTimeWeekly", y = "StudyTimeWeekly") +
-  theme(plot.title = element_text(size = 20),  # Tamanho do título
-        axis.title.y = element_text(size = 15))  # Tamanho do rótulo do eixo y
+  labs(title = "StudyTimeWeekly", y = "") +
+  theme(plot.title = element_text(hjust = 0.5))  
 
 
 # 2.2) GPA (será feito o mesmo procedimento na variavel StudyTimeWeekly)
@@ -103,14 +103,12 @@ summary(tabela$GPA)  # Resumo estatístico dos dados
 tabela$GPA_log_scaled <- log(tabela$GPA)
 
 # Visualizando os valores escalados com boxplot
-# Visualizando o boxplot da variavel GPA
+# Visualizando o boxplot da variavel StudyTimeWeekly
 
 ggplot(tabela, aes(y = GPA_log_scaled)) +
   geom_boxplot() +
-  labs(title = "Boxplot de GPA", y = "GPA") +
-  theme(plot.title = element_text(size = 20),  # Tamanho do título
-        axis.title.y = element_text(size = 15))  # Tamanho do rótulo do eixo y
-+ options(repr.plot.width = 8, repr.plot.height = 6)
+  labs(title = "GPA", y = "") +
+  theme(plot.title = element_text(hjust = 0.5)) 
 
 # Verificar resumo dos valores de GPA
 summary(tabela$GPA_log_scaled)
@@ -151,19 +149,17 @@ nova_tabela <- nova_tabela %>%
   rename(GPA = GPA_log_scaled)
 
 
-# Renomeando nova_tabela
-# Renomeando variavel GPA_log_scaled
+#Renomeando variavel StudyTimeWeekly_log_scaled
 nova_tabela <- nova_tabela %>%
   rename(StudyTimeWeekly = StudyTimeWeekly_log_scaled)
 
 
-# Como não vamos precisar do ID dos estudantes, também será removido da base de dados
+# Como nao vamos precisar do ID tambem foi removido da base de dados
 #removendo a coluna StudentID
 nova_tabela <- nova_tabela %>%
   select(-StudentID)
 
-
-# 2.3) GradeClass
+# GradeClass
 # Convertendo a coluna GradeClass para formato numérico
 nova_tabela$GradeClass <- as.numeric(nova_tabela$GradeClass)
 
@@ -173,6 +169,7 @@ sum(is.na(nova_tabela$GradeClass))
 # Verificar estatísticas descritivas
 summary(nova_tabela$GradeClass)
 
+# Proximos passos
 # 3) Análise de Correlação
 
 # Verificar as variaveis correlacionada
@@ -221,21 +218,21 @@ corrplot(correlations, method="circle",  add = FALSE)
 set.seed(123)  # Definindo uma seed para reprodutibilidade
 proporcao_treino <- 0.8
 
-# Criando uma partição estratégica
+# Criando uma partição estratificada
 indice_treino <- createDataPartition(nova_tabela$GradeClass, p = proporcao_treino, list = FALSE)
 
 # Criando conjuntos de treinamento e teste
 dados_treino <- nova_tabela[indice_treino, ]
 dados_teste <- nova_tabela[-indice_treino, ]
 
-# Nessa próxima etapa é importante utilizar mais de um modelo de classificação para fazer a comparação. Sendo assim, foi escolhido
+# Nessa próxima etapa é importante mais de um modelo de classificação para fazer a comparação. Sendo assim, foi escolhido
 # os seguintes modelos: Arvore de classificação,KNN (K-Nearest Neighbours), Bayes  (Naïve Bayes), SVM  (Support Vector Machine)
 
 # 3.2) Arvore de classificação
 
 # Separar as variáveis preditoras e a variável de resposta
 
-# Identificar o índice da coluna de resposta 
+# Identificar o índice da coluna de resposta ()
 response_col_index <- which(colnames(nova_tabela) == "GradeClass")
 
 # Separar as variáveis preditoras e a variável de resposta para os dados de treino
@@ -261,10 +258,24 @@ predictions_c50 <- predict(c50_model, test_features)
 
 # Avaliar o desempenho
 confusion_matrix_c50 <- table(predictions_c50, test_target)
-print(confusion_matrix_c50)
 
+# Convertendo a matriz de confusão para um data frame no formato long
+confusion_df_matrix_c50 <- as.data.frame(as.table(confusion_matrix_c50))
+
+# Renomeando as colunas
+colnames(confusion_df_matrix_c50) <- c("Predicted", "Actual", "Count")
+
+# Visualização matriz confusão 
+ggplot(confusion_df_matrix_c50, aes(x = Actual, y = Predicted, fill = Count)) +
+  geom_tile() +
+  scale_fill_gradient(low = "white", high = "blue") +
+  geom_text(aes(label = Count), color = "black") +
+  labs(title = "Matriz confusão Arvore binaria", x = "Actual", y = "Predicted") +
+  theme_minimal()
+
+# Acuracia Arovre Binaria
 accuracy_c50 <- sum(diag(confusion_matrix_c50)) / sum(confusion_matrix_c50)
-print(paste("Acurácia arvore:", accuracy_c50 * 100))
+print(paste("Acurácia árvore binária:", accuracy_c50 * 100))
 
 
 # 3.3) KNN (K-Nearest Neighbours)
@@ -282,9 +293,25 @@ predict_knn <- knn(train = train_x, test = test_x, cl = train_y, k = k)
 
 # Avaliar o modelo
 confusion_matrix_knn <- table(Predicted = predict_knn, Actual = test_y)
+
+# Convertendo a matriz de confusão para um data frame no formato long
+confusion_df_matrix_knn <- as.data.frame(as.table(confusion_matrix_knn))
+
+# Renomeando as colunas
+colnames(confusion_df_matrix_knn) <- c("Predicted", "Actual", "Count")
+
+# Visualização matriz confusão 
+ggplot(confusion_df_matrix_knn, aes(x = Actual, y = Predicted, fill = Count)) +
+  geom_tile() +
+  scale_fill_gradient(low = "white", high = "blue") +
+  geom_text(aes(label = Count), color = "black") +
+  labs(title = "Matriz confusão KNN", x = "Actual", y = "Predicted") +
+  theme_minimal()
+
+
+# Acuracia modelo KNN
 accuracy_knn <- sum(diag(confusion_matrix_knn)) / sum(confusion_matrix_knn)
-print(confusion_matrix_knn)
-print(paste("Acurácia KNN:", accuracy_knn * 100))
+print(paste("Acurácia:", accuracy_knn * 100))
 
 # 3.4) Bayes  (Naïve Bayes)
 
@@ -296,29 +323,187 @@ predictions_bayes <- predict(model, dados_teste)
 
 # Avaliar o modelo
 confusion_matrix_bayes <- table(dados_teste$GradeClass, predictions_bayes)
+
+# Convertendo a matriz de confusão para um data frame no formato long
+confusion_df_matrix_bayes <- as.data.frame(as.table(confusion_matrix_bayes))
+
+# Renomeando as colunas
+colnames(confusion_df_matrix_bayes) <- c("Predicted", "Actual", "Count")
+
+# Visualização matriz confusão 
+ggplot(confusion_df_matrix_bayes, aes(x = Actual, y = Predicted, fill = Count)) +
+  geom_tile() +
+  scale_fill_gradient(low = "white", high = "blue") +
+  geom_text(aes(label = Count), color = "black") +
+  labs(title = "Matriz confusão Bayes", x = "Actual", y = "Predicted") +
+  theme_minimal()
+
+
+#Acuracia bayes
 accuracy_bayes <- sum(diag(confusion_matrix_bayes)) / sum(confusion_matrix_bayes)
-print(confusion_matrix_bayes)
-print(paste("Acurácia Naïve Bayes:", accuracy_bayes * 100))
+print(paste("Acurácia bayes:", accuracy_bayes * 100))
 
 
-# 3.5) SVM  (Support Vector Machine)
+# Comparação dos modelos
 
-# Treinamento do Modelo SVM
-svm_model <- ksvm(GradeClass ~ ., data = dados_treino, kernel = "rbfdot")
+# Criação do dataframe com os dados das acurácias
+acuracias <- data.frame(
+  Modelo = c("Árvore Binária", "k-NN", "Bayes"),
+  Acuracia = c(accuracy_c50 * 100, accuracy_knn * 100, accuracy_bayes * 100)
+)
 
-# Predição com o Modelo Treinado
-predictions_svm <- predict(svm_model, dados_teste, type = "response")
-
-# Avaliação do Modelo
-confusion_matrix_svm <- table(Predicted = predictions_svm, Actual = dados_teste$GradeClass)
-accuracy_svm <- sum(diag(confusion_matrix_svm)) / sum(confusion_matrix_svm)
-print(confusion_matrix_svm)
-print(paste("Acurácia modelo SVM:", accuracy_svm * 100))
-
+# Criando o gráfico de barras
+ggplot(acuracias, aes(x = Modelo, y = Acuracia)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(title = "Comparação das Acurácias dos Modelos",
+       x = "Modelo",
+       y = "Acurácia (%)") +
+  theme_minimal()
 
 
-# Proximos passos
-# Comparar os modelos de todos os modelos e dizer qual é o melhor. Para comparar os modelos use histograma
+# Depois escreva a conclusão
+
+
+# testes
+
+
+#Visualização histograma Age
+ggplot(tabela, aes(x = Age)) +
+  geom_histogram(binwidth = 0.5, fill = "lightblue", color = "black") +
+  labs(title = "Age",
+       x = "",
+       y = "") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+
+#Visualização histograma Gender
+ggplot(tabela, aes(x = Gender)) +
+  geom_histogram(binwidth = 0.5, fill = "lightblue", color = "black") +
+  labs(title = "Gender",
+       x = "",
+       y = "") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+#Visualização histograma Ethnicity
+ggplot(tabela, aes(x = Ethnicity)) +
+  geom_histogram(binwidth = 0.5, fill = "lightblue", color = "black") +
+  labs(title = "Ethnicity",
+       x = "",
+       y = "") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+#Visualização histograma ParentalEducation
+ggplot(tabela, aes(x = ParentalEducation)) +
+  geom_histogram(binwidth = 0.5, fill = "lightblue", color = "black") +
+  labs(title = "ParentalEducation",
+       x = "",
+       y = "") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+#Visualização histograma StudyTimeWeekly
+ggplot(tabela, aes(x = StudyTimeWeekly)) +
+  geom_bar(fill = "lightblue", color = "lightblue") +
+  labs(title = "StudyTimeWeekly",
+       x = "",
+       y = "") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+#Visualização histograma Absences
+ggplot(tabela, aes(x = Absences)) +
+  geom_histogram(binwidth = 0.5, fill = "lightblue", color = "black") +
+  labs(title = "Absences",
+       x = "",
+       y = "") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+#Visualização histograma Tutoring
+ggplot(tabela, aes(x = Tutoring)) +
+  geom_histogram(binwidth = 0.5, fill = "lightblue", color = "black") +
+  labs(title = "Tutoring",
+       x = "",
+       y = "") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+#Visualização histograma ParentalSupport
+ggplot(tabela, aes(x = ParentalSupport)) +
+  geom_histogram(binwidth = 0.5, fill = "lightblue", color = "black") +
+  labs(title = "ParentalSupport",
+       x = "",
+       y = "") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+#Visualização histograma Extracurricular
+ggplot(tabela, aes(x = Extracurricular)) +
+  geom_histogram(binwidth = 0.5, fill = "lightblue", color = "black") +
+  labs(title = "Extracurricular",
+       x = "",
+       y = "") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+#Visualização histograma Sports
+ggplot(tabela, aes(x = Sports)) +
+  geom_histogram(binwidth = 0.5, fill = "lightblue", color = "black") +
+  labs(title = "Sports",
+       x = "",
+       y = "") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+#Visualização histograma Music
+ggplot(tabela, aes(x = Music)) +
+  geom_histogram(binwidth = 0.5, fill = "lightblue", color = "black") +
+  labs(title = "Music",
+       x = "",
+       y = "") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+
+#Visualização histograma Volunteering
+ggplot(tabela, aes(x = Volunteering)) +
+  geom_histogram(binwidth = 0.5, fill = "lightblue", color = "black") +
+  labs(title = "Volunteering",
+       x = "",
+       y = "") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+#Visualização histograma GPA
+ggplot(tabela, aes(x = factor(GPA))) +
+  geom_bar(fill = "lightblue", color = "lightblue") +
+  labs(title = "GPA",
+       x = "",
+       y = "") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+
+#Visualização histograma GradeClass
+ggplot(tabela, aes(x = factor(GradeClass))) +
+  geom_bar(fill = "lightblue", color = "black") +
+  labs(title = "GradeClass",
+       x = "",
+       y = "") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+#Visualização histograma StudentID
+ggplot(tabela, aes(x = StudentID)) +
+  geom_histogram(binwidth = 0.5, fill = "lightblue", color = "lightblue") +
+  labs(title = "StudentID",
+       x = "",
+       y = "") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
 
 
 
