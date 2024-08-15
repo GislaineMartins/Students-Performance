@@ -25,7 +25,7 @@ A pergunta que buscamos responder neste projeto é: Qual será a classificação
    - Estatísticas descritivas para entender melhor a distribuição das variáveis.
 
 #### 4) Modelagem e Treinamento:
-  - Seleção do modelo de classificação adequado (Árvore de Decisão, K-Nearest Neighbours, Naïve Bayes e Support Vector Machine).
+  - Seleção do modelo de classificação adequado (Árvore de Decisão, K-Nearest Neighbours e Naïve Bayes).
   - Divisão dos dados em conjuntos de treinamento e teste.
   - Treinamento do modelo utilizando o conjunto de treinamento.
 
